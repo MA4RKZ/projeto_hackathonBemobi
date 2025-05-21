@@ -1,18 +1,158 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Assistente Virtual - Login</title>
-  </head>
-  <body>
-    <h2>Bem-vindo! Informe seu nome e e-mail para continuar:</h2>
-    <form method="post">
-      {% csrf_token %}
-      <label for="nome">Nome:</label>
-      <input type="text" id="nome" name="nome" required /><br />
-      <label for="email">E-mail:</label>
-      <input type="email" id="email" name="email" required /><br />
-      <button type="submit">Continuar</button>
-    </form>
-  </body>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente Virtual de Pagamentos - Início</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">Assistente Virtual de Pagamentos</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#" class="nav-link" id="themeToggle"><i class="fas fa-moon"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="container">
+        <div class="row" style="margin-top: 3rem;">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Bem-vindo ao Assistente Virtual de Pagamentos</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Para começar, por favor, informe seus dados:</p>
+                        
+                        <form id="userForm" method="post" action="{% url 'inicial_view' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" id="nome" name="nome" class="form-control" placeholder="Seu nome completo" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="seu.email@exemplo.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefone" class="form-label">Telefone (opcional)</label>
+                                <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="(00) 00000-0000">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Iniciar Conversa</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recursos do assistente -->
+        <div class="row" style="margin-top: 3rem; margin-bottom: 3rem;">
+            <div class="col">
+                <h2>O que nosso assistente pode fazer por você</h2>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="font-size: 2rem; color: var(--primary-color); text-align: center; margin-bottom: 1rem;">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <h3 class="card-title" style="text-align: center;">Informações sobre Planos</h3>
+                                <p class="card-text">Obtenha detalhes completos sobre nossos planos, benefícios, preços e condições especiais.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="font-size: 2rem; color: var(--primary-color); text-align: center; margin-bottom: 1rem;">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <h3 class="card-title" style="text-align: center;">Pagamentos Simplificados</h3>
+                                <p class="card-text">Realize pagamentos de forma rápida e segura através de PIX, boleto ou cartão de crédito.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="font-size: 2rem; color: var(--primary-color); text-align: center; margin-bottom: 1rem;">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h3 class="card-title" style="text-align: center;">Histórico de Transações</h3>
+                                <p class="card-text">Consulte seu histórico completo de pagamentos e status das suas assinaturas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Assistente Virtual de Pagamentos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Alternador de tema claro/escuro
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-theme');
+                    
+                    // Salvar preferência do usuário
+                    const isDarkTheme = document.body.classList.contains('dark-theme');
+                    localStorage.setItem('darkTheme', isDarkTheme);
+                    
+                    // Atualizar ícone
+                    themeToggle.innerHTML = isDarkTheme ? 
+                        '<i class="fas fa-sun"></i>' : 
+                        '<i class="fas fa-moon"></i>';
+                });
+                
+                // Verificar preferência salva
+                const savedTheme = localStorage.getItem('darkTheme');
+                if (savedTheme === 'true') {
+                    document.body.classList.add('dark-theme');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+            
+            // Máscara para telefone
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    // Formato (00) 00000-0000
+                    if (value.length > 6) {
+                        value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7);
+                    } else if (value.length > 2) {
+                        value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
+        });
+    </script>
+</body>
 </html>

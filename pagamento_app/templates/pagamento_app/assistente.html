@@ -1,149 +1,171 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Chatbot</title>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente Virtual de Pagamentos</title>
+    
     <!-- CSS -->
-    <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-      rel="stylesheet"
-      id="bootstrap-css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" type="text/css" href=" <link rel="stylesheet"
-    type="text/css" href="
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'css/style.css' %}"
-    />
-    " /> " />
-  </head>
-
-  <body>
-    <div class="container-fluid h-100">
-      <div class="row justify-content-center h-100">
-        <div class="col-md-8 col-xl-6 chat">
-          <div class="card">
-            <div class="card-header msg_head">
-              <div class="d-flex bd-highlight">
-                <div class="img_cont">
-                  <img
-                    src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png"
-                    class="rounded-circle user_img"
-                  />
-                  <span class="online_icon"></span>
-                </div>
-                <div class="user_info">
-                  <span>BemoChat</span>
-                  <p>Tire qualquer dúvida !</p>
-                </div>
-              </div>
-            </div>
-            <div id="messageFormeight" class="card-body msg_card_body"></div>
-            <div class="card-footer">
-              <form id="messageArea" class="input-group">
-                <input
-                  type="text"
-                  id="text"
-                  name="msg"
-                  placeholder="Type your message..."
-                  autocomplete="off"
-                  class="form-control type_msg"
-                  style="display: block !important"
-                  <!--
-                  Força
-                  a
-                  exibição
-                  --
-                />
-                required />
-                <div class="input-group-append">
-                  <button
-                    type="submit"
-                    id="send"
-                    class="input-group-text send_btn"
-                    style="display: block !important"
-                    <!--
-                    Força
-                    a
-                    exibição
-                    --
-                  >
-                    >
-                    <i class="fas fa-location-arrow"></i>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">Assistente Virtual de Pagamentos</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="{% url 'inicial_view' %}" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link" id="themeToggle"><i class="fas fa-moon"></i></a></li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Sair</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
-      </div>
-    </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="container">
+        <div class="row">
+            <div class="col">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" alt="Avatar" class="chat-header-avatar">
+                        <div class="chat-header-info">
+                            <h3>Assistente de Pagamentos</h3>
+                            <p>Online</p>
+                        </div>
+                    </div>
+                    <div id="chatMessages" class="chat-messages">
+                        <!-- Mensagens serão inseridas aqui via JavaScript -->
+                    </div>
+                    <form id="messageForm" class="chat-input">
+                        <input type="text" id="messageInput" class="chat-input-field" placeholder="Digite sua mensagem..." autocomplete="off">
+                        <button type="submit" id="sendButton" class="chat-input-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Métodos de pagamento -->
+        <div class="row" style="margin-top: 2rem;">
+            <div class="col">
+                <h2>Métodos de Pagamento</h2>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="pix">
+                        <div class="payment-method-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <h3 class="payment-method-title">PIX</h3>
+                        <p class="payment-method-description">Pagamento instantâneo</p>
+                    </div>
+                    <div class="payment-method" data-method="boleto">
+                        <div class="payment-method-icon">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <h3 class="payment-method-title">Boleto</h3>
+                        <p class="payment-method-description">Pagamento em até 3 dias úteis</p>
+                    </div>
+                    <div class="payment-method" data-method="cartao">
+                        <div class="payment-method-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3 class="payment-method-title">Cartão de Crédito</h3>
+                        <p class="payment-method-description">Pagamento em até 12x</p>
+                    </div>
+                </div>
+                <div id="paymentDetails" class="payment-details">
+                    <h3>Selecione um método de pagamento</h3>
+                    <p>Clique em um dos métodos de pagamento acima para ver mais detalhes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planos disponíveis -->
+        <div class="row" style="margin-top: 2rem; margin-bottom: 2rem;">
+            <div class="col">
+                <h2>Planos Disponíveis</h2>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Plano Básico</h3>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">R$29,99/mês</h4>
+                                <ul>
+                                    <li>15GB de internet</li>
+                                    <li>Apps com internet ilimitada</li>
+                                    <li>Serviços ilimitados: Ligação, SMS</li>
+                                </ul>
+                                <p class="card-text">Ideal para quem não usa muitos dados móveis e não requer para uso profissional.</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary btn-block" onclick="selectPlan('basico')">Escolher Plano</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Plano Premium</h3>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">R$59,90/mês</h4>
+                                <ul>
+                                    <li>35GB de internet</li>
+                                    <li>Apps com internet ilimitada</li>
+                                    <li>Serviços ilimitados: Ligação, SMS</li>
+                                </ul>
+                                <p class="card-text">Para quem necessita de dados móveis para uso diário intenso ou profissional.</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary btn-block" onclick="selectPlan('premium')">Escolher Plano</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Assistente Virtual de Pagamentos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
     <!-- JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/chat.js' %}"></script>
     <script>
-      function scrollToBottom() {
-        var messageBody = document.getElementById("messageFormeight");
-        messageBody.scrollTop = messageBody.scrollHeight;
-      }
-
-      $(document).ready(function () {
-        $("#messageArea").on("submit", function (event) {
-          event.preventDefault(); // Evita o recarregamento da página
-          const date = new Date();
-          const str_time = date.getHours() + ":" + date.getMinutes();
-          var rawText = $("#text").val();
-
-          var userHtml =
-            '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' +
-            rawText +
-            '<span class="msg_time_send">' +
-            str_time +
-            '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
-          $("#text").val("");
-          $("#messageFormeight").append(userHtml);
-          scrollToBottom();
-
-          $.ajax({
-            data: JSON.stringify({ mensagem: rawText }),
-            type: "POST",
-            url: "{% url 'chatbot_response' %}",
-            contentType: "application/json",
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            success: function (data) {
-              var botHtml =
-                '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' +
-                data.resposta +
-                '<span class="msg_time">' +
-                str_time +
-                "</span></div></div>";
-              $("#messageFormeight").append($.parseHTML(botHtml));
-              scrollToBottom();
-            },
-            error: function () {
-              var errorHtml =
-                '<div class="d-flex justify-content-start mb-4"><div class="msg_cotainer">Erro ao processar a mensagem.</div></div>';
-              $("#messageFormeight").append(errorHtml);
-              scrollToBottom();
-            },
-          });
-        });
-      });
+        function selectPlan(planId) {
+            localStorage.setItem('selectedPlan', planId);
+            const planName = planId === 'basico' ? 'Básico' : 'Premium';
+            const message = `Quero contratar o plano ${planName}`;
+            
+            // Preencher campo de mensagem
+            document.getElementById('messageInput').value = message;
+            
+            // Focar no chat
+            document.querySelector('.chat-container').scrollIntoView({ behavior: 'smooth' });
+            
+            // Destacar o campo de mensagem
+            const inputField = document.getElementById('messageInput');
+            inputField.focus();
+            inputField.classList.add('highlight');
+            
+            setTimeout(() => {
+                inputField.classList.remove('highlight');
+            }, 1500);
+        }
     </script>
-  </body>
+</body>
 </html>
